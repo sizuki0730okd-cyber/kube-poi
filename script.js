@@ -15,18 +15,11 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentY = 0;
     let isBurning = false;
 
-    // --- Audio Handling (Web Audio API) ---
-    let audioContext;
-    let fireGainNode;
-    let audioStarted = false;
-
     function playAudio() {
-        if (audioStarted) return; // Prevent multiple inits
-
         if (!audioContext) {
             try {
                 audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                
+
                 // Create Brown Noise (Rumble)
                 const bufferSize = audioContext.sampleRate * 2; // 2 seconds
                 const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
@@ -54,19 +47,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 noiseSource.connect(filter);
                 filter.connect(fireGainNode);
                 fireGainNode.connect(audioContext.destination);
-                
+
                 noiseSource.start(0);
                 console.log("Bonfire audio started");
-                audioStarted = true;
             } catch (e) {
                 console.warn("Audio Context failed:", e);
             }
         }
-        
+
+        // Critical: Always try to resume if suspended (needed for browsers blocking auto-play)
         if (audioContext && audioContext.state === 'suspended') {
-            audioContext.resume().then(() => {
-                audioStarted = true;
-            });
+            audioContext.resume();
         }
     }
 
@@ -88,15 +79,15 @@ document.addEventListener('DOMContentLoaded', () => {
         // Random Color
         const randomColor = noteColors[Math.floor(Math.random() * noteColors.length)];
         notePaper.style.backgroundColor = randomColor;
-        
+
         // Reset State
         noteText.value = '';
         noteContainer.style.transform = 'translateY(0)';
         noteContainer.style.opacity = '1';
-        
+
         // Show Overlay
         noteOverlay.classList.remove('hidden');
-        
+
         // Blur Background
         document.getElementById('bonfire-bg').classList.add('blurred');
 
@@ -105,7 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Swipe / Drag Logic ---
-    
+
     // Touch Events
     noteOverlay.addEventListener('touchstart', (e) => startDrag(e.touches[0].clientY));
     noteOverlay.addEventListener('touchmove', (e) => dragging(e.touches[0].clientY));
