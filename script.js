@@ -87,6 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Show Overlay
         noteOverlay.classList.remove('hidden');
+        noteOverlay.style.visibility = 'visible'; // Force visibility
 
         // Blur Background
         document.getElementById('bonfire-bg').classList.add('blurred');
@@ -170,6 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // After animation
         setTimeout(() => {
             noteOverlay.classList.add('hidden');
+            noteOverlay.style.visibility = ''; // Reset inline style
             isBurning = false;
             noteContainer.style.transition = ''; // Reset
 
@@ -185,6 +187,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Show
         messageOverlay.classList.remove('hidden');
+        messageOverlay.style.visibility = 'visible';
         messageText.classList.add('show-message');
 
         // Hide after some time
@@ -193,6 +196,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Wait for fade out
             setTimeout(() => {
                 messageOverlay.classList.add('hidden');
+                messageOverlay.style.visibility = ''; // Reset
                 // Remove Blur
                 document.getElementById('bonfire-bg').classList.remove('blurred');
             }, 1000);
