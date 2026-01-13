@@ -18,12 +18,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Audio Handling (Web Audio API) ---
     let audioContext;
     let fireGainNode;
+    let audioStarted = false;
 
     function playAudio() {
+        if (audioStarted) return; // Prevent multiple inits
+
         if (!audioContext) {
             try {
                 audioContext = new (window.AudioContext || window.webkitAudioContext)();
-
+                
                 // Create Brown Noise (Rumble)
                 const bufferSize = audioContext.sampleRate * 2; // 2 seconds
                 const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
@@ -51,22 +54,33 @@ document.addEventListener('DOMContentLoaded', () => {
                 noiseSource.connect(filter);
                 filter.connect(fireGainNode);
                 fireGainNode.connect(audioContext.destination);
-
+                
                 noiseSource.start(0);
                 console.log("Bonfire audio started");
+                audioStarted = true;
             } catch (e) {
                 console.warn("Audio Context failed:", e);
             }
         }
-
+        
         if (audioContext && audioContext.state === 'suspended') {
-            audioContext.resume();
+            audioContext.resume().then(() => {
+                audioStarted = true;
+            });
         }
     }
+
+    // Attempt to play immediately (might be blocked by browser policy)
+    playAudio();
+
+    // Ensure audio starts on ANY first interaction
+    document.body.addEventListener('click', playAudio, { once: true });
+    document.body.addEventListener('touchstart', playAudio, { once: true });
 
     // --- Kuberu Button Action ---
     kuberuBtn.addEventListener('click', () => {
         openNote();
+        // playAudio is already covered by global listeners, but good to keep as backup
         playAudio();
     });
 
@@ -74,15 +88,15 @@ document.addEventListener('DOMContentLoaded', () => {
         // Random Color
         const randomColor = noteColors[Math.floor(Math.random() * noteColors.length)];
         notePaper.style.backgroundColor = randomColor;
-
+        
         // Reset State
         noteText.value = '';
         noteContainer.style.transform = 'translateY(0)';
         noteContainer.style.opacity = '1';
-
+        
         // Show Overlay
         noteOverlay.classList.remove('hidden');
-
+        
         // Blur Background
         document.getElementById('bonfire-bg').classList.add('blurred');
 
@@ -91,7 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Swipe / Drag Logic ---
-
+    
     // Touch Events
     noteOverlay.addEventListener('touchstart', (e) => startDrag(e.touches[0].clientY));
     noteOverlay.addEventListener('touchmove', (e) => dragging(e.touches[0].clientY));
@@ -113,6 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // For simplicity in this prototype, we'll allow drag anywhere on the overlay/container.
         isDragging = true;
         startY = y;
+        currentY = y; // FIX: Initialize currentY to prevent jump/tap bug
     }
 
     function dragging(y) {
