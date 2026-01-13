@@ -1,0 +1,264 @@
+:root {
+    /* Color Palette - Warm & Dark */
+    --bg-base: #000000;
+    /* Very dark brown/red */
+    --fire-1: #ff4500;
+    /* Orange Red */
+    --fire-2: #ff8c00;
+    /* Dark Orange */
+    --fire-3: #8b0000;
+    /* Dark Red */
+    --text-color: #f0e6d2;
+    /* Eggshell/Off-white */
+
+    /* Sticky Note Colors (Calm) */
+    --note-beige: #f5f5dc;
+    --note-pale-brown: #e6dace;
+    --note-muted-orange: #f2e0d0;
+    --note-grayish: #e8e8e8;
+
+    /* Font - More refined */
+    --font-main: 'Shippori Mincho', serif;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+    /* Prevent selection for app-like feel */
+    -webkit-tap-highlight-color: transparent;
+}
+
+body,
+html {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    /* Prevent scrolling */
+    font-family: var(--font-main);
+    background-color: var(--bg-base);
+    color: var(--text-color);
+}
+
+#bonfire-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+    background: url('assets/bg.png') no-repeat center center;
+    background-size: cover;
+    transition: filter 0.8s ease;
+    overflow: hidden;
+}
+
+/* Blur Class for JS */
+.blurred {
+    filter: blur(8px) brightness(0.7);
+}
+
+/* Embers */
+.embers {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image:
+        radial-gradient(#ffaa00 1px, transparent 1px),
+        radial-gradient(#ff4500 2px, transparent 2px),
+        radial-gradient(#ff8c00 1.5px, transparent 1.5px);
+    background-size: 50% 50%, 60% 60%, 40% 40%;
+    background-position: 0 0, 0 0, 0 0;
+    animation: rise 25s linear infinite;
+    opacity: 0.6;
+    z-index: 1;
+    filter: blur(0.5px);
+}
+
+@keyframes rise {
+    0% {
+        background-position: 0 100vh, 20vw 120vh, 40vw 110vh;
+        opacity: 0;
+    }
+
+    10% {
+        opacity: 0.8;
+    }
+
+    80% {
+        opacity: 0.8;
+    }
+
+    100% {
+        background-position: 0 -10vh, 20vw -20vh, 40vw -10vh;
+        opacity: 0;
+    }
+}
+
+#app-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    /* Move to bottom */
+    padding-bottom: 50px;
+    /* Padding from bottom */
+}
+
+/* Kuberu Button */
+#kuberu-btn {
+    padding: 1.2rem 3.5rem;
+    font-size: 1.4rem;
+    font-family: var(--font-main);
+    color: var(--text-color);
+    background: rgba(0, 0, 0, 0.4);
+    /* More transparent/darker */
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 50px;
+    backdrop-filter: blur(2px);
+    cursor: pointer;
+    transition: all 0.5s ease;
+    letter-spacing: 0.2rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    margin-bottom: 5vh;
+    /* Responsive margin */
+}
+
+#kuberu-btn:active {
+    transform: scale(0.95);
+    background: rgba(255, 255, 255, 0.15);
+}
+
+/* Utility Classes */
+.hidden {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+}
+
+.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Note Overlay */
+#note-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    z-index: 20;
+    transition: opacity 0.3s ease;
+}
+
+#note-container {
+    width: 80%;
+    max-width: 350px;
+    position: relative;
+    transition: transform 0.1s linear;
+    /* Smooth swipe tracking */
+}
+
+.note-paper {
+    width: 100%;
+    height: 300px;
+    /* Rectangular-ish */
+    background: var(--note-beige);
+    padding: 1.5rem;
+    border-radius: 2px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    transform: rotate(-1deg);
+}
+
+.note-paper textarea {
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    border: none;
+    resize: none;
+    outline: none;
+    font-family: var(--font-main);
+    font-size: 1.1rem;
+    color: #333;
+    line-height: 1.6;
+}
+
+.swipe-guide {
+    margin-top: 2rem;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.6);
+    animation: bounce 2s infinite;
+}
+
+.swipe-guide .arrow {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.swipe-guide .text {
+    font-size: 0.9rem;
+    letter-spacing: 0.05rem;
+}
+
+@keyframes bounce {
+
+    0%,
+    20%,
+    50%,
+    80%,
+    100% {
+        transform: translateY(0);
+    }
+
+    40% {
+        transform: translateY(-10px);
+    }
+
+    60% {
+        transform: translateY(-5px);
+    }
+}
+
+/* Message Overlay */
+#message-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 30;
+    pointer-events: none;
+    /* Let clicks pass through if needed, though usually it blocks */
+}
+
+#message-text {
+    font-size: 1.2rem;
+    text-align: center;
+    line-height: 2;
+    max-width: 80%;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 1s ease, transform 1s ease;
+}
+
+#message-text.show-message {
+    opacity: 1;
+    transform: translateY(0);
+}

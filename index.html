@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Kube-poi - くべぽい</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div id="bonfire-bg">
+        <div class="embers"></div>
+    </div>
+
+    <div id="app-container">
+        <!-- Main Screen -->
+        <div id="main-screen">
+            <button id="kuberu-btn" class="fade-in">くべる</button>
+        </div>
+
+        <!-- Sticky Note Overlay -->
+        <div id="note-overlay" class="hidden">
+            <div id="note-container">
+                <div class="note-paper">
+                    <textarea id="note-text" placeholder="ここに感情を置いてください..."></textarea>
+                </div>
+                <div class="swipe-guide">
+                    <div class="arrow">↑</div>
+                    <div class="text">上にスワイプしてくべる</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Message Overlay -->
+        <div id="message-overlay" class="hidden">
+            <p id="message-text"></p>
+        </div>
+    </div>
+
+    <audio id="bonfire-sound" loop>
+        <!-- Placeholder for audio, will be handled in JS context -->
+    </audio>
+
+    <script src="data.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
